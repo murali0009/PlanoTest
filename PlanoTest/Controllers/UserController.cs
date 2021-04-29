@@ -19,14 +19,14 @@ namespace PlanoTest.Controllers
         private readonly ILogger<UserController> _logger;
         private UserContext _userContext;
         private IDictionary resources;
-        private ReadResource()
+        private void ReadResource()
         {
             ResXResourceReader rr = new ResXResourceReader("resources.resx");
-            foreach (DictionaryEntry d in rsxr)
+            foreach (DictionaryEntry d in rr)
             {
                 resources.Add(d.Key, d.Value);
             }
-            rsxr.Close();
+            rr.Close();
         }
         public UserController(ILogger<UserController> logger, UserContext uc)
         {

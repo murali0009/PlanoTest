@@ -41,6 +41,7 @@ namespace PlanoTest
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
@@ -52,6 +53,8 @@ namespace PlanoTest
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
         }
     }
 }
