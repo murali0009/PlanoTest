@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using PlanoTest.Data;
@@ -8,84 +9,82 @@ using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
+using System.Resources.NetStandard;
+using System.Threading;
+
 
 namespace PlanoTest.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class UserController : ControllerBase
     {
 
         private readonly ILogger<UserController> _logger;
         private UserContext _userContext;
-        private IDictionary resources;
-        private void ReadResource()
-        {
-            ResXResourceReader rr = new ResXResourceReader("resources.resx");
-            foreach (DictionaryEntry d in rr)
-            {
-                resources.Add(d.Key, d.Value);
-            }
-            rr.Close();
-        }
+        
         public UserController(ILogger<UserController> logger, UserContext uc)
         {
             _logger = logger;
             _userContext = uc;
-            ReadResource();
         }
 
         [HttpPost]
-        public ActionResult<User> GetMessage([FromBody] long userId)
+        public ActionResult GetMessage([FromBody] long userId)
         {
             var user = _userContext.Users.Where(x => x.UserId == userId).FirstOrDefault();
             dynamic jsonObject = new JObject();
             jsonObject.FullName = user.FullName;
-            jsonObject.Message = resources[user.Language];
-            return jsonObject;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(user.Language);
+            jsonObject.Message = Properties.Resources.Message;
+            return Content(jsonObject.ToString(), "application/json");
         }
 
         [HttpPost]
-        public ActionResult<User> GetMessage([FromBody] string FullName, string Language)
+        public ActionResult AddUser([FromBody] object input)
         {
             dynamic jsonObject = new JObject();
-            if (!IsValidCultureName(Language))
+            try
             {
-                try
+                JObject Inp = JObject.Parse(input.ToString());
+                JToken Language;
+                JToken FullName;
+                Inp.TryGetValue("FullName", out FullName);
+                Inp.TryGetValue("Language", out Language);
+
+                if (IsValidCultureName(Language.ToString()))
                 {
                     User _user = new User();
-                    _user.FullName = FullName;
-                    _user.Language = Language;
+                    _user.FullName = FullName.ToString();
+                    _user.Language = Language.ToString();
                     _userContext.Users.Add(_user);
                     _userContext.SaveChanges();
 
-                    return jsonObject.IsSuccess = true;
+                    jsonObject.IsSuccess = true;
                 }
-                catch(Exception ex)
+                else
                 {
-                    return jsonObject.IsSuccess = false;
+                    jsonObject.IsSuccess = false;
                 }
             }
-            return jsonObject.IsSuccess = false;
-        }
+            catch (Exception ex)
+            {
+                jsonObject.IsSuccess = false;
+            }
 
-        [HttpGet]
-        public ActionResult<User> Get()
-        {
-            var user = _userContext.Users.FirstOrDefault();
-            return null;
+            return Content(jsonObject.ToString(), "application/json");
         }
 
         private static bool IsValidCultureName(string cultureName)
         {
-            CultureInfo[] cultures =
-                CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-            foreach (CultureInfo culture in cultures)
-            {
-                if (culture.Name == cultureName)
-                    return true;
-            }
-
+            CultureInfo en_cultures =
+                CultureInfo.GetCultureInfo("en-US");
+            CultureInfo cn_cultures =
+                CultureInfo.GetCultureInfo("zh-CN");
+            CultureInfo ja_cultures =
+                CultureInfo.GetCultureInfo("ja-JP");
+            if (en_cultures.Name == cultureName || en_cultures.Name == cultureName || en_cultures.Name == cultureName)
+                return true;
             return false;
         }
     }

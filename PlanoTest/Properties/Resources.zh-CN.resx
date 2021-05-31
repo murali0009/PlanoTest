@@ -117,13 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="en-US" xml:space="preserve">
-    <value>I am a developer from Plano</value>
-  </data>
-  <data name="ja-JP" xml:space="preserve">
+  <data name="Message" xml:space="preserve">
     <value>“私はaPlanoの開発者です</value>
-  </data>
-  <data name="zh-CN" xml:space="preserve">
-    <value>“我是Plano的开发人员</value>
   </data>
 </root>

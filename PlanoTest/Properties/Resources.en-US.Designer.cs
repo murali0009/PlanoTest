@@ -61,29 +61,11 @@ namespace PlanoTest.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I am a developer from Plano.
+        ///   Looks up a localized string similar to The is Plano test.
         /// </summary>
-        internal static string en_US {
+        internal static string Message {
             get {
-                return ResourceManager.GetString("en-US", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to “私はaPlanoの開発者です.
-        /// </summary>
-        internal static string ja_JP {
-            get {
-                return ResourceManager.GetString("ja-JP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to “我是Plano的开发人员.
-        /// </summary>
-        internal static string zh_CN {
-            get {
-                return ResourceManager.GetString("zh-CN", resourceCulture);
+                return ResourceManager.GetString("Message", resourceCulture);
             }
         }
     }
